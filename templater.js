@@ -58,7 +58,11 @@ Templater.prototype.createElement = function (tagName, args) {
   if (typeof args[lastIdx] === "string") {
     this.stack.push(this.h(tagName, props, ...args));
   } else {
-    const temp = this.h(tagName, props, ...this.stack);
+    let childs = [...this.stack];
+    for (let x of args) {
+      childs = [...childs, ...x.stack];
+    }
+    const temp = this.h(tagName, props, ...childs);
 
     this.stack = [];
     this.stack.push(temp);
@@ -131,19 +135,6 @@ Templater.prototype.h = function (tagName, props, ...children) {
 Templater.prototype.valueOf = function (c) {
   return this.$lastReturn;
 };
-
-// const t = new Templater();
-
-// console.log( Templater().span('Hello').span('World').toString())
-// console.log("---------------------------------")
-
-// console.log(
-//     Templater().p(
-//         Templater().span('nested'),
-//         Templater().span('span')
-//     ).toString()
-// );
-
 
 module.exports = function() {
   return new Templater();
